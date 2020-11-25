@@ -52,6 +52,8 @@ class OperationFactory {
                 return new IgBundler();
 //            case "PackageIG":
 //                return new PackageOperation();
+            case "GenerateCQLFromDrool":
+                return new GenerateCQLFromDroolOperation();
             case "RefreshIG":
                 return new RefreshIGOperation();
             case "RefreshLibrary":
