@@ -81,10 +81,14 @@ public class R4LibraryProcessor extends LibraryProcessor {
 
     private void loadLibrary(Map<String, String> fileMap, List<org.hl7.fhir.r5.model.Library> libraries, File libraryFile) {
         try {
-            Resource resource = FormatUtilities.loadFile(libraryFile.getAbsolutePath());
-            org.hl7.fhir.r5.model.Library library = (org.hl7.fhir.r5.model.Library) VersionConvertor_40_50.convertResource(resource);
-            fileMap.put(library.getId(), libraryFile.getAbsolutePath());
-            libraries.add(library);
+            if (libraryFile.getPath().endsWith(".txt")) {
+                System.out.println("skip");
+            } else {
+                Resource resource = FormatUtilities.loadFile(libraryFile.getAbsolutePath());
+                org.hl7.fhir.r5.model.Library library = (org.hl7.fhir.r5.model.Library) VersionConvertor_40_50.convertResource(resource);
+                fileMap.put(library.getId(), libraryFile.getAbsolutePath());
+                libraries.add(library);
+            }
         } catch (IOException ex) {
             logMessage(String.format("Error reading library: %s. Error: %s", libraryFile.getAbsolutePath(), ex.getMessage()));
         }

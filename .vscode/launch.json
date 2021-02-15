@@ -51,17 +51,12 @@
             "projectName": "tooling",
             "args": [
                 "-RefreshIG",
-                "-ip=../aphl-ig",
-                "-rp=../aphl-ig/input/resources",
-                "-rp=../input/pagecontent/cql",
-                "-rp=../aphl-ig/input/vocabulary",
                 "-fs=http://localhost:8080/cqf-ruler-r4/fhir",
                 "-e=json",
-                "-v",
                 "-t",
                 "-d",
                 "-p",
-                "-ini=../aphl-ig/ig.ini",
+                "-ini=../hedis/ig.ini",
                 "-cdsig"
             ]
         },
@@ -85,9 +80,9 @@
             "projectName": "tooling",
             "args": [
                 "-VsacXlsxToValueSetBatch",
-                "-ptsd=../aphl-ig/input/vocabulary/valueset/spreadsheets",
-                "-vssrc=vsac",
-                "-op=../aphl-ig/input/vocabulary/valueset/spreadsheets"
+                "-ptsd=../hedis-ig-r4/input/vocabulary/valueset/spreadsheets",
+                "-vssrc=hedis",
+                "-op=../hedis-ig-r4/input/vocabulary/valueset/spreadsheets"
             ]
         },
         {
@@ -134,8 +129,11 @@
             "projectName": "tooling",
             "args": [
                 "-RefreshIG",
-                "-ip=../connectathon/fhir3/",
-                "-iv=fhir3",
+                "-ip=../hedis-ig-r4",
+                "-rp=../hedis-ig-r4/input/resources",
+                "-rp=../hedis-ig-r4/input/pagecontent/cql",
+                "-rp=../hedis-ig-r4/input/vocabulary",
+                "-iv=fhir4",
                 "-t",
                 "-d",
                 "-v",
