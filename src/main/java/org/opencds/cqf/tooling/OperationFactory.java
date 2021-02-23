@@ -89,6 +89,8 @@ class OperationFactory {
                 return new ExecuteMeasureTestOperation();
             case "SpreadsheetToCQL":
                 return new SpreadsheetToCQLOperation();
+            case "GatherDataRequirements":
+                return new GatherDataRequirementsOperation();
             default:
                 throw new IllegalArgumentException("Invalid operation: " + operationName);
         }
