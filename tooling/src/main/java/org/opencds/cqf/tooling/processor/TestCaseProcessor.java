@@ -33,8 +33,12 @@ public class TestCaseProcessor {
     public static final String TEST_ARTIFACT_URL = "http://hl7.org/fhir/StructureDefinition/artifact-testArtifact";
     public static final String MEASURE_URL = "http://ecqi.healthit.gov/ecqms/Measure/";
     public static final String PATIENT_TYPE = "Patient";
+    public static final String MEASURE_REPORT_TYPE = "MeasureReport";
+    public static final String ORGANIZATION_TYPE = "Organization";
+    public static final String COVERAGE_TYPE = "Coverage";
     public static final String BUNDLE_TYPE = "Bundle";
     public static final String GROUP_FILE_SEPARATOR = "Group-";
+    public static UUID orgUuid = UUID.randomUUID();
 
     private Map<String, String> getIgnoredTestList() {
         Map<String, String> ignoredTestList = new HashMap<>();
@@ -61,11 +65,11 @@ public class TestCaseProcessor {
     }
 
     public void refreshTestCases(String path, IOUtils.Encoding encoding, FhirContext fhirContext, Boolean verboseMessaging) {
-        refreshTestCases(path, encoding, fhirContext, null, verboseMessaging);
+        refreshTestCases(path, encoding, fhirContext, null, verboseMessaging, false);
     }
 
     public void refreshTestCases(String path, IOUtils.Encoding encoding, FhirContext fhirContext, @Nullable List<String> refreshedResourcesNames,
-                                 Boolean verboseMessaging) {
+                                 Boolean verboseMessaging, Boolean madieFixes) {
         logger.info("[Refreshing Tests]");
 
         final Map<String, String> testCaseRefreshSuccessMap = new HashMap<>();
@@ -75,6 +79,8 @@ public class TestCaseProcessor {
         final Map<String, String> groupFileRefreshFailMap = new HashMap<>();
 
         IFhirVersion version = fhirContext.getVersion();
+
+        Pattern UUID_PATTERN = Pattern.compile("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$");
 
         final int totalTestFileCount = getTestFileCount(path);
 
@@ -181,6 +187,42 @@ public class TestCaseProcessor {
                                                 addPatientToGroupR4(testGroup, patient);
                                             }
                                         }
+
+                                        // START MADiE export corrections that may later be removed
+                                        if (madieFixes) {
+                                            // Since we may have changed IDs to resources remove the evaluated resources
+                                            // from the measure report, this also removes the fully qualified reference URLs
+                                            if (bundleResource.fhirType().equalsIgnoreCase(MEASURE_REPORT_TYPE)) {
+                                                org.hl7.fhir.r4.model.MeasureReport report = (org.hl7.fhir.r4.model.MeasureReport) bundleResource;
+                                                report.setEvaluatedResource(null);
+                                            }
+
+                                            // Set the Organization ID
+                                            if (bundleResource.fhirType().equalsIgnoreCase(ORGANIZATION_TYPE)) {
+                                                bundleResource.setId(orgUuid.toString());
+                                            }
+
+                                            // Set the coverage reference to the org
+                                            if (bundleResource.fhirType().equalsIgnoreCase(COVERAGE_TYPE)) {
+                                                org.hl7.fhir.r4.model.Coverage coverage = (org.hl7.fhir.r4.model.Coverage) bundleResource;
+                                                org.hl7.fhir.r4.model.Reference orgReference =
+                                                        new org.hl7.fhir.r4.model.Reference("Organization/" + orgUuid.toString());
+                                                List<org.hl7.fhir.r4.model.Reference> refs = new ArrayList<org.hl7.fhir.r4.model.Reference>();
+                                                refs.add(orgReference);
+                                                coverage.setPayor(refs);
+                                            }
+
+                                            // Check the ID of the resource to see if it is a UUID
+                                            String resID = bundleResource.getIdElement().getIdPart();
+                                            if (!UUID_PATTERN.matcher(resID).matches()) {
+                                                // If the ID is not a UUID replace it with one
+                                                UUID uuid = UUID.randomUUID();
+                                                bundleResource.setId(uuid.toString());
+                                            } else {
+                                                bundleResource.setId(resID);
+                                            }
+                                        }
+                                        // END MADiE export corrections
                                     }
                                 }
                             }

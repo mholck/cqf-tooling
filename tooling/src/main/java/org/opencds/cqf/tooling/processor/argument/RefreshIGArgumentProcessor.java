@@ -38,6 +38,7 @@ public class RefreshIGArgumentProcessor {
     public static final String[] SHOULD_APPLY_SOFTWARE_SYSTEM_STAMP_OPTIONS = { "ss", "stamp" };
     public static final String[] SHOULD_ADD_TIMESTAMP_OPTIONS = { "ts", "timestamp" };
     public static final String[] SHOULD_INCLUDE_ERRORS = { "x", "include-errors" };
+    public static final String[] MADIE_FIXES = {"mf", "madie-fixes"};
 
 
     @SuppressWarnings("unused")
@@ -85,6 +86,7 @@ public class RefreshIGArgumentProcessor {
         parser.acceptsAll(asList(INCLUDE_PATIENT_SCENARIOS_OPTIONS),"If omitted patient scenario information will not be packaged.");
         parser.acceptsAll(asList(VERSIONED_OPTIONS),"If omitted resources must be uniquely named.");
         parser.acceptsAll(asList(SHOULD_INCLUDE_ERRORS),"Specifies whether to show errors during library, measure, and test case refresh.");
+        parser.acceptsAll(asList(MADIE_FIXES),"If omitted IDs will not be checked for UUID.");
 
         OptionSpec<Void> help = parser.acceptsAll(asList(ArgUtils.HELP_OPTIONS), "Show this help page").forHelp();
 
@@ -124,6 +126,7 @@ public class RefreshIGArgumentProcessor {
         Boolean includeTerminology = options.has(INCLUDE_TERMINOLOGY_OPTIONS[0]);
         Boolean includePatientScenarios = options.has(INCLUDE_PATIENT_SCENARIOS_OPTIONS[0]);
         Boolean versioned = options.has(VERSIONED_OPTIONS[0]);
+        Boolean madieFixes = options.has(MADIE_FIXES[0]);
         String fhirUri = (String)options.valueOf(FHIR_URI_OPTIONS[0]);
         String measureToRefreshPath = (String)options.valueOf(MEASURE_TO_REFRESH_PATH[0]);
 
@@ -188,6 +191,8 @@ public class RefreshIGArgumentProcessor {
         ip.measureOutputPath = measureOutputPath;
         ip.updatedVersion = updatedVersion;
         ip.verboseMessaging = verboseMessaging;
+        ip.madieFixes = madieFixes;
+
         return ip;
     }
 }

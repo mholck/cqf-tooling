@@ -145,7 +145,7 @@ public class IGProcessor extends BaseProcessor {
         String measureOutputPath = params.measureOutputPath;
         Boolean includePatientScenarios = params.includePatientScenarios;
         Boolean versioned = params.versioned;
-
+        Boolean madieFixes = params.madieFixes;
 
         IOUtils.resourceDirectories.addAll(resourceDirs);
         FhirContext fhirContext = IGProcessor.getIgFhirContext(fhirVersion);
@@ -170,7 +170,7 @@ public class IGProcessor extends BaseProcessor {
 
         if (includePatientScenarios) {
             TestCaseProcessor testCaseProcessor = new TestCaseProcessor();
-            testCaseProcessor.refreshTestCases(FilenameUtils.concat(rootDir, IGProcessor.TEST_CASE_PATH_ELEMENT), encoding, fhirContext, refreshedResourcesNames, verboseMessaging);
+            testCaseProcessor.refreshTestCases(FilenameUtils.concat(rootDir, IGProcessor.TEST_CASE_PATH_ELEMENT), encoding, fhirContext, refreshedResourcesNames, verboseMessaging, madieFixes);
         }
     }
 
